@@ -18,9 +18,9 @@ export function WelcomeCard() {
                 <CardDescription style={{ whiteSpace: "pre-line" }}>{"Using the MangaDex API, this website allows you to read manga of your choice if it is available.\nJust type its name in the search bar above. Happy reading!"}</CardDescription>
                 {/* <CardAction></CardAction> */}
             </CardContent>
-            <CardFooter>
+            {/* <CardFooter>
                 By KeemOnGithub
-            </CardFooter>
+            </CardFooter> */}
         </Card>
     )
 }
