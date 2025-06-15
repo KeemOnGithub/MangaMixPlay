@@ -21,6 +21,7 @@ import { useState } from "react"
 import axios from "axios";
 import { Search } from "lucide-react"
 import { WelcomeCard } from "@/components/welcome-card"
+import { ModeToggle } from "@/components/mode-toggle"
 
 export default function Home() {
   const [searchInput, setSearchInput] = useState("")
@@ -58,6 +59,8 @@ export default function Home() {
       <SidebarInset>
         <header className="bg-background sticky top-0 flex h-12 shrink-0 items-center gap-2 border-b px-4">
           <SidebarTrigger className="-ml-1" />
+          <Separator orientation="vertical" className="mr-2 h-4" />
+          <ModeToggle />
           <Separator orientation="vertical" className="mr-2 h-4" />
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4">
