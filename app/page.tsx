@@ -33,8 +33,11 @@ export default function Home() {
   function handleCompleteSearchInput(event: any) {
     if (event.key == "Enter") {
       console.log(event.target.value)
-
-      axios.get(`https://api.mangadex.org/manga?title=${event.target.value}&includes[]=author&includes[]=cover_art`)
+      if(searchInput == "") {
+        setSearchResults(null)
+      }
+      else {
+        axios.get(`https://api.mangadex.org/manga?title=${event.target.value}&includes[]=author&includes[]=cover_art`)
         .then(function (response) {
           // handle success
           console.log(response.data);
@@ -45,6 +48,7 @@ export default function Home() {
           // handle error
           console.log(error);
         })
+      }
     }
   }
 
