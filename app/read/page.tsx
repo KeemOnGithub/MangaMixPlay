@@ -28,6 +28,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 export default function Reader() {
   const searchParams = useSearchParams()
   const mangaId = searchParams.get('id')
+  const mangaTitle = (searchParams.get('title') || "")
   const [chapterData, setChapterData] = useState<any>(null)
   const [mangaFeed, setMangaFeed] = useState<any>(null)
 
@@ -78,7 +79,8 @@ export default function Reader() {
 
   return (
     <SidebarProvider>
-      <ReaderSidebar />
+      <ReaderSidebar
+        mangaTitle={mangaTitle} />
       <SidebarInset>
         <header className="bg-background sticky top-0 flex h-12 shrink-0 items-center gap-2 border-b px-4">
           <SidebarTrigger className="-ml-1" />

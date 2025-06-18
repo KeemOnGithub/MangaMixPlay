@@ -21,7 +21,7 @@ export function MangaCard({title, description, author, image, id}: MangaCardProp
     return (
         <Card>
             <CardHeader>
-                <Link href={{pathname: "/read", query: { id: id }}}>
+                <Link href={{pathname: "/read", query: { id: id, title: title }}}>
                     <CardTitle>{title}</CardTitle>
                 </Link>
             </CardHeader>

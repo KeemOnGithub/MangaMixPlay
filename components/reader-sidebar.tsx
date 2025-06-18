@@ -65,11 +65,11 @@ const data = {
   ],
 }
 
-export function ReaderSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function ReaderSidebar({ mangaTitle, ...props }: { mangaTitle: string } & React.ComponentProps<typeof Sidebar>){
   return (
     <Sidebar {...props}>
       <div style={{ marginBottom: "20px", marginTop: "20px", textAlign: "center" }}>
-        <h3>Dekinai Futari</h3>
+        <h3>{mangaTitle}</h3>
       </div>
       <SidebarContent className="gap-0">
         {/* We create a collapsible SidebarGroup for each parent. */}
