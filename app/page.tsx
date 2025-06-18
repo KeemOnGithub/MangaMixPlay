@@ -59,9 +59,11 @@ export default function Home() {
       <SidebarInset>
         <header className="bg-background sticky top-0 flex h-12 shrink-0 items-center gap-2 border-b px-4">
           <SidebarTrigger className="-ml-1" />
-          <Separator orientation="vertical" className="mr-2 h-4" />
-          <ModeToggle />
-          <Separator orientation="vertical" className="mr-2 h-4" />
+          {/* <Separator orientation="vertical" className="mr-2 h-4" /> */}
+          <div style={{marginLeft: "auto"}}>
+            <ModeToggle />
+          </div>         
+          {/* <Separator orientation="vertical" className="mr-2 h-4" /> */}
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4">
           <label className="relative h-10 w-full">
@@ -78,9 +80,10 @@ export default function Home() {
               searchResults?.data?.map((el: any, index: number) => (
                 <MangaCard
                   key={index}
-                  title={el?.attributes?.title?.en || "Loading..."}
-                  description={el?.attributes?.description?.en || "Loading..."}
-                  author={(el.relationships?.find((rel: any) => rel.type === "author"))?.attributes?.name || "Loading..."}
+                  title={el?.attributes?.title?.en || "No Title"}
+                  id={el?.id}
+                  description={el?.attributes?.description?.en || "No description available."}
+                  author={(el.relationships?.find((rel: any) => rel.type === "author"))?.attributes?.name || "Author name not available"}
                   image={`https://uploads.mangadex.org/covers/${el?.id}/${(el.relationships?.find((rel: any) => rel.type === "cover_art"))?.attributes?.fileName}`}
                 />
               ))

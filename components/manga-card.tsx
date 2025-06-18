@@ -7,19 +7,23 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
+import Link from "next/link";
 
 type MangaCardProps = {
   title: string;
   description: string;
   author: string;
   image: string;
+  id: string;
 };
 
-export function MangaCard({title, description, author, image}: MangaCardProps) {
+export function MangaCard({title, description, author, image, id}: MangaCardProps) {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>{title}</CardTitle>
+                <Link href={{pathname: "/read", query: { id: id }}}>
+                    <CardTitle>{title}</CardTitle>
+                </Link>
             </CardHeader>
             <CardContent className="flex flex-1 flex-row gap-4">
                 <CardDescription>{description}</CardDescription>
