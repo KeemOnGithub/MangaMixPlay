@@ -68,11 +68,11 @@ let data = {
   ],
 }
 
-export function ReaderSidebar({ mangaTitle, ...props }: { mangaTitle: string } & React.ComponentProps<typeof Sidebar>){
+export function ReaderSidebar({ mangaTitle, ...props }: { mangaTitle: string } & React.ComponentProps<typeof Sidebar>) {
   const searchParams = useSearchParams()
   const mangaId = searchParams.get('id')
   const [mangaFeed, setMangaFeed] = useState<any>(null)
-  const [chapterList, setChapterList] = 
+  const [chapterList, setChapterList] =
     useState<{ volume: number; items: { chapter: number; url: string }[] }[]>([]);
 
 
@@ -88,7 +88,7 @@ export function ReaderSidebar({ mangaTitle, ...props }: { mangaTitle: string } &
         volume: chapter?.attributes?.volume,
         chapter: chapter?.attributes?.chapter,
       })
-    )
+      )
     : [];
 
   //first step
@@ -102,10 +102,10 @@ export function ReaderSidebar({ mangaTitle, ...props }: { mangaTitle: string } &
   useEffect(() => {
     if (data2) {
       console.log(data2);
-      cleanData();
+      setChapterList(cleanData())
     }
   }, [data2]);
-  
+
   function handleGetMangaFeed(id: string) {
     axios
       .get(`https://api.mangadex.org/manga/${id}/feed`)
@@ -118,7 +118,7 @@ export function ReaderSidebar({ mangaTitle, ...props }: { mangaTitle: string } &
       });
   }
 
-  function cleanData(){
+  function cleanData() {
     let chapterList: { volume: number; items: { chapter: number; url: string; }[] }[] = [];
 
     data2.forEach((item: any) => {
@@ -135,13 +135,42 @@ export function ReaderSidebar({ mangaTitle, ...props }: { mangaTitle: string } &
           volume,
           items: [{ chapter, url }],
         });
+        // chapterList.sort(
+        //   function (a, b) {
+        //     if (a.volume < b.volume) {
+        //       return -1
+        //     };
+        //     if (a.volume > b.volume) {
+        //       return 1
+        //     };
+        //     return 0;
+        //   }
+        // );
       } else {
         // If exists, push chapter into its items
         volumeGroup.items.push({ chapter, url });
+        // volumeGroup.items.sort(
+        //   function (a, b) {
+        //     if (a.chapter < b.chapter) {
+        //       return -1
+        //     };
+        //     if (a.chapter > b.chapter) {
+        //       return 1
+        //     };
+        //     return 0;
+        //   }
+        // );
       }
     });
 
-    setChapterList(chapterList)
+    chapterList.sort((a, b) => a.volume - b.volume);
+
+    // ✅ Sort chapters inside each volume
+    chapterList.forEach(group => {
+      group.items.sort((a, b) => a.chapter - b.chapter);
+    });
+
+    return chapterList;
   }
 
   return (
@@ -173,9 +202,9 @@ export function ReaderSidebar({ mangaTitle, ...props }: { mangaTitle: string } &
                   <SidebarMenu>
                     {item.items?.map((item: any) => (
                       <SidebarMenuItem key={item.chapter}>
-                        <SidebarMenuButton asChild 
-                         // isActive={item.isActive}
-                         isActive={false}
+                        <SidebarMenuButton asChild
+                          // isActive={item.isActive}
+                          isActive={false}
                         >
                           <a href="google.com">{`Chapter ${item.chapter}`}</a>
                         </SidebarMenuButton>

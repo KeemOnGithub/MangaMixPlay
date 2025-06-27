@@ -70,11 +70,17 @@ export default function Reader() {
 
   //want to be able to handle different chapters in future - save user's current chapter in memory
   function handleGetChapterData(chapterId: string = "placeholder") {
-    const firstChapter = mangaFeed?.data?.find(
+    const englishChapters = mangaFeed?.data?.filter(
       (chapter: any) =>
-        Math.min(chapter?.attributes?.chapter) &&
         chapter?.attributes?.translatedLanguage === "en"
     );
+
+    const firstChapter = englishChapters.sort(
+      (a: any,b: any) => a.attributes?.chapter - b.attributes?.chapter
+    )[0]
+
+    console.log(englishChapters)
+    console.log(firstChapter)
 
     axios
       .get(`https://api.mangadex.org/at-home/server/${firstChapter.id}`)
