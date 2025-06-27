@@ -103,11 +103,10 @@ export default function Reader() {
       let pageImageArray: string[] = []
       console.log(images)
 
-      const link1 = (`${baseUrl}/data/${hash}/${images[count]}`)
-      const link2 = (`${baseUrl}/data/${hash}/${images[count+1]}`)
-
-      pageImageArray.push(link1)
-      pageImageArray.push(link2)
+      for(let i=0; i < images.length; i++){
+        const link = (`${baseUrl}/data/${hash}/${images[i]}`)
+        pageImageArray.push(link)
+      }
 
       setPageImages(pageImageArray)
   }
