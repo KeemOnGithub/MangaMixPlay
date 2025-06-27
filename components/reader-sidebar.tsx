@@ -68,7 +68,7 @@ let data = {
   ],
 }
 
-export function ReaderSidebar({ mangaTitle, ...props }: { mangaTitle: string } & React.ComponentProps<typeof Sidebar>) {
+export function ReaderSidebar({ mangaTitle, mangaFeedRead, ...props }: { mangaTitle: string, mangaFeedRead: any } & React.ComponentProps<typeof Sidebar>) {
   const searchParams = useSearchParams()
   const mangaId = searchParams.get('id')
   const [mangaFeed, setMangaFeed] = useState<any>(null)
@@ -86,18 +86,15 @@ export function ReaderSidebar({ mangaTitle, ...props }: { mangaTitle: string } &
       ?.filter((chapter: any) => chapter?.attributes?.translatedLanguage === "en") // or !== if filtering out
       .map((chapter: any) => ({
         volume: chapter?.attributes?.volume,
-        chapter: chapter?.attributes?.chapter,
+        chapter: chapter?.attributes?.chapter
       })
       )
     : [];
 
   //first step
   useEffect(() => {
-    if (mangaId) {
-      console.log('Manga ID: ', mangaId);
-      handleGetMangaFeed(mangaId);
-    }
-  }, [mangaId]);
+      handleGetMangaFeed();
+  }, [handleGetMangaFeed]);
 
   useEffect(() => {
     if (data2) {
@@ -106,16 +103,9 @@ export function ReaderSidebar({ mangaTitle, ...props }: { mangaTitle: string } &
     }
   }, [data2]);
 
-  function handleGetMangaFeed(id: string) {
-    axios
-      .get(`https://api.mangadex.org/manga/${id}/feed`)
-      .then((response) => {
-        console.log('MANGA FEED:', response.data);
-        setMangaFeed(response.data);
-      })
-      .catch((error) => {
-        console.error('API error:', error);
-      });
+  function handleGetMangaFeed() {
+    setMangaFeed(mangaFeedRead)
+    console.log(mangaFeedRead)
   }
 
   function cleanData() {
