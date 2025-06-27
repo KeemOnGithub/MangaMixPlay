@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/sidebar"
 import axios from "axios"
 import { useSearchParams } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
 
 // This is sample data.
@@ -82,16 +82,17 @@ export function ReaderSidebar({ mangaTitle, mangaFeedRead, ...props }: { mangaTi
 
   //create an object array containing chapter, sorted by volume if it exists.
   //volumes at the top, standalone chapters at the bottom
-  let data2 = mangaFeed ?
-    mangaFeed?.data
-      ?.filter((chapter: any) => chapter?.attributes?.translatedLanguage === "en") // or !== if filtering out
-      .map((chapter: any) => ({
-        volume: chapter?.attributes?.volume,
-        chapter: chapter?.attributes?.chapter,
-        id: chapter?.id
-      })
-      )
-    : [];
+  const data2 = useMemo(() => {
+    return mangaFeed ?
+      mangaFeed?.data
+        ?.filter((chapter: any) => chapter?.attributes?.translatedLanguage === "en")
+        .map((chapter: any) => ({
+          volume: chapter?.attributes?.volume,
+          chapter: chapter?.attributes?.chapter,
+          id: chapter?.id
+        }))
+      : [];
+  }, [mangaFeed]);
 
   //first step
   useEffect(() => {

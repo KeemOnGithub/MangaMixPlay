@@ -19,11 +19,13 @@ import {
 } from "@/components/ui/sidebar"
 import { useEffect, useState } from "react"
 import axios from "axios";
-import { Search } from "lucide-react"
+import { House, Search } from "lucide-react"
 import { WelcomeCard } from "@/components/welcome-card"
 import { ModeToggle } from "@/components/mode-toggle"
 import { ReaderSidebar } from "@/components/reader-sidebar"
 import { useRouter, useSearchParams } from "next/navigation";
+import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 export default function Reader() {
   const searchParams = useSearchParams()
@@ -121,9 +123,17 @@ export default function Reader() {
       <SidebarInset>
         <header className="bg-background sticky top-0 flex h-12 shrink-0 items-center gap-2 border-b px-4">
           <SidebarTrigger className="-ml-1" />
+          <Button asChild variant="ghost" size="icon" className="-m1-1 size-7">
+            <Link href="/">
+              <House />
+            </Link>
+          </Button>
           {/* <Separator orientation="vertical" className="mr-2 h-4" /> */}
           <div style={{ marginLeft: "auto" }}>
             <ModeToggle />
+            {/* <Link href={{pathname: "/"}}>
+              <Button></Button>
+            </Link> */}
           </div>
           {/* <Separator orientation="vertical" className="mr-2 h-4" /> */}
         </header>
