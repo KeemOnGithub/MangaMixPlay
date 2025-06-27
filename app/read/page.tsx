@@ -50,7 +50,7 @@ export default function Reader() {
     if (mangaFeed?.data) {
       handleGetChapterData(chapterId)
     }
-  }, [mangaFeed]);
+  }, [mangaFeed, chapterId]);
   
   //third step
   useEffect(() => {
