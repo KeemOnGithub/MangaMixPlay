@@ -23,6 +23,7 @@ import {
 import axios from "axios"
 import { useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
+import Link from "next/link"
 
 // This is sample data.
 let data = {
@@ -73,7 +74,7 @@ export function ReaderSidebar({ mangaTitle, mangaFeedRead, ...props }: { mangaTi
   const mangaId = searchParams.get('id')
   const [mangaFeed, setMangaFeed] = useState<any>(null)
   const [chapterList, setChapterList] =
-    useState<{ volume: number; items: { chapter: number; url: string }[] }[]>([]);
+    useState<{ volume: number; items: { chapter: number; id: string }[] }[]>([]);
 
 
   //create an object array containing chapter, sorted by volume if it exists.
@@ -86,7 +87,8 @@ export function ReaderSidebar({ mangaTitle, mangaFeedRead, ...props }: { mangaTi
       ?.filter((chapter: any) => chapter?.attributes?.translatedLanguage === "en") // or !== if filtering out
       .map((chapter: any) => ({
         volume: chapter?.attributes?.volume,
-        chapter: chapter?.attributes?.chapter
+        chapter: chapter?.attributes?.chapter,
+        id: chapter?.id
       })
       )
     : [];
@@ -109,12 +111,12 @@ export function ReaderSidebar({ mangaTitle, mangaFeedRead, ...props }: { mangaTi
   }
 
   function cleanData() {
-    let chapterList: { volume: number; items: { chapter: number; url: string; }[] }[] = [];
+    let chapterList: { volume: number; items: { chapter: number; id: string; }[] }[] = [];
 
     data2.forEach((item: any) => {
       const volume = item.volume ?? -1;
       const chapter = item.chapter;
-      const url = item.url;
+      const id = item.id;
 
       // Find if this volume already exists in chapterList
       let volumeGroup = chapterList.find(group => group.volume === volume);
@@ -123,7 +125,7 @@ export function ReaderSidebar({ mangaTitle, mangaFeedRead, ...props }: { mangaTi
         // If not, add it
         chapterList.push({
           volume,
-          items: [{ chapter, url }],
+          items: [{ chapter, id }],
         });
         // chapterList.sort(
         //   function (a, b) {
@@ -138,7 +140,7 @@ export function ReaderSidebar({ mangaTitle, mangaFeedRead, ...props }: { mangaTi
         // );
       } else {
         // If exists, push chapter into its items
-        volumeGroup.items.push({ chapter, url });
+        volumeGroup.items.push({ chapter, id });
         // volumeGroup.items.sort(
         //   function (a, b) {
         //     if (a.chapter < b.chapter) {
@@ -196,7 +198,7 @@ export function ReaderSidebar({ mangaTitle, mangaFeedRead, ...props }: { mangaTi
                           // isActive={item.isActive}
                           isActive={false}
                         >
-                          <a href="google.com">{`Chapter ${item.chapter}`}</a>
+                          <Link href={{pathname: "/read", query: { id: mangaId, title: mangaTitle, chapterId: item.id }}}>{`Chapter ${item.chapter}`}</Link>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                     ))}

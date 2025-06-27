@@ -28,6 +28,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 export default function Reader() {
   const searchParams = useSearchParams()
   const mangaId = searchParams.get('id')
+  const chapterId = searchParams.get('chapterId')
   const mangaTitle = (searchParams.get('title') || "")
   const [chapterData, setChapterData] = useState<any>(null)
   const [mangaFeed, setMangaFeed] = useState<any>(null)
@@ -45,7 +46,7 @@ export default function Reader() {
   //second step
   useEffect(() => {
     if (mangaFeed?.data) {
-      handleGetChapterData()
+      handleGetChapterData(chapterId)
     }
   }, [mangaFeed]);
   
@@ -69,7 +70,7 @@ export default function Reader() {
   }
 
   //want to be able to handle different chapters in future - save user's current chapter in memory
-  function handleGetChapterData(chapterId: string = "placeholder") {
+  function handleGetChapterData(chapterId: string | null) {
     const englishChapters = mangaFeed?.data?.filter(
       (chapter: any) =>
         chapter?.attributes?.translatedLanguage === "en"
@@ -83,7 +84,7 @@ export default function Reader() {
     console.log(firstChapter)
 
     axios
-      .get(`https://api.mangadex.org/at-home/server/${firstChapter.id}`)
+      .get(chapterId != null ?`https://api.mangadex.org/at-home/server/${chapterId}` : `https://api.mangadex.org/at-home/server/${firstChapter.id}`)
       .then((response) => {
         console.log('CHAPTER DATA:', response.data);
         console.log(firstChapter.attributes.chapter);
