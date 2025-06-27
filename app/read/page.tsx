@@ -31,6 +31,8 @@ export default function Reader() {
   const mangaTitle = (searchParams.get('title') || "")
   const [chapterData, setChapterData] = useState<any>(null)
   const [mangaFeed, setMangaFeed] = useState<any>(null)
+  const [pageImages, setPageImages] = useState<string[]>([])
+  const [count, setCount] = useState(0);
 
   //first step
   useEffect(() => {
@@ -46,6 +48,13 @@ export default function Reader() {
       handleGetChapterData()
     }
   }, [mangaFeed]);
+  
+  //third step
+  useEffect(() => {
+    if (chapterData) {
+      handleGetChapterImage()
+    }
+  }, [chapterData]);
 
   function handleGetMangaFeed(id: string) {
     axios
@@ -63,18 +72,38 @@ export default function Reader() {
   function handleGetChapterData(chapterId: string = "placeholder") {
     const firstChapter = mangaFeed?.data?.find(
       (chapter: any) =>
-        chapter?.attributes?.chapter === "1" &&
+        Math.min(chapter?.attributes?.chapter) &&
         chapter?.attributes?.translatedLanguage === "en"
     );
+
     axios
       .get(`https://api.mangadex.org/at-home/server/${firstChapter.id}`)
       .then((response) => {
         console.log('CHAPTER DATA:', response.data);
+        console.log(firstChapter.attributes.chapter);
         setChapterData(response.data);
+        // handleGetChapterImage();
       })
       .catch((error) => {
         console.error('API error:', error);
       });
+  }
+
+  //download images
+    function handleGetChapterImage(chapterId: string = "placeholder") {
+      const baseUrl: string = chapterData?.baseUrl
+      const images: string[] = chapterData?.chapter?.data
+      const hash: string = chapterData?.chapter?.hash
+      let pageImageArray: string[] = []
+      console.log(images)
+
+      const link1 = (`${baseUrl}/data/${hash}/${images[count]}`)
+      const link2 = (`${baseUrl}/data/${hash}/${images[count+1]}`)
+
+      pageImageArray.push(link1)
+      pageImageArray.push(link2)
+
+      setPageImages(pageImageArray)
   }
 
   return (
@@ -91,9 +120,17 @@ export default function Reader() {
           {/* <Separator orientation="vertical" className="mr-2 h-4" /> */}
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4">
-          <img
-
-          />
+          {
+            pageImages ?
+              pageImages?.map((img: string, index: number) => (
+                <img
+                  key = {index}
+                  src = {img}
+                />
+              ))
+              :
+              <p>No image</p>
+          }
         </div>
       </SidebarInset>
     </SidebarProvider>
