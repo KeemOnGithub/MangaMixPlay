@@ -20,9 +20,12 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar"
+import axios from "axios"
+import { useSearchParams } from "next/navigation"
+import { useEffect, useState } from "react"
 
 // This is sample data.
-const data = {
+let data = {
   versions: ["1.0.1", "1.1.0-alpha", "2.0.0-beta1"],
   navMain: [
     {
@@ -66,6 +69,81 @@ const data = {
 }
 
 export function ReaderSidebar({ mangaTitle, ...props }: { mangaTitle: string } & React.ComponentProps<typeof Sidebar>){
+  const searchParams = useSearchParams()
+  const mangaId = searchParams.get('id')
+  const [mangaFeed, setMangaFeed] = useState<any>(null)
+  const [chapterList, setChapterList] = 
+    useState<{ volume: number; items: { chapter: number; url: string }[] }[]>([]);
+
+
+  //create an object array containing chapter, sorted by volume if it exists.
+  //volumes at the top, standalone chapters at the bottom
+
+  //create an object array containing chapter, sorted by volume if it exists.
+  //volumes at the top, standalone chapters at the bottom
+  let data2 = mangaFeed ?
+    mangaFeed?.data
+      ?.filter((chapter: any) => chapter?.attributes?.translatedLanguage === "en") // or !== if filtering out
+      .map((chapter: any) => ({
+        volume: chapter?.attributes?.volume,
+        chapter: chapter?.attributes?.chapter,
+      })
+    )
+    : [];
+
+  //first step
+  useEffect(() => {
+    if (mangaId) {
+      console.log('Manga ID: ', mangaId);
+      handleGetMangaFeed(mangaId);
+    }
+  }, [mangaId]);
+
+  useEffect(() => {
+    if (data2) {
+      console.log(data2);
+      cleanData();
+    }
+  }, [data2]);
+  
+  function handleGetMangaFeed(id: string) {
+    axios
+      .get(`https://api.mangadex.org/manga/${id}/feed`)
+      .then((response) => {
+        console.log('MANGA FEED:', response.data);
+        setMangaFeed(response.data);
+      })
+      .catch((error) => {
+        console.error('API error:', error);
+      });
+  }
+
+  function cleanData(){
+    let chapterList: { volume: number; items: { chapter: number; url: string; }[] }[] = [];
+
+    data2.forEach((item: any) => {
+      const volume = item.volume ?? -1;
+      const chapter = item.chapter;
+      const url = item.url;
+
+      // Find if this volume already exists in chapterList
+      let volumeGroup = chapterList.find(group => group.volume === volume);
+
+      if (!volumeGroup) {
+        // If not, add it
+        chapterList.push({
+          volume,
+          items: [{ chapter, url }],
+        });
+      } else {
+        // If exists, push chapter into its items
+        volumeGroup.items.push({ chapter, url });
+      }
+    });
+
+    setChapterList(chapterList)
+  }
+
   return (
     <Sidebar {...props}>
       <div style={{ marginBottom: "20px", marginTop: "20px", textAlign: "center" }}>
@@ -73,10 +151,10 @@ export function ReaderSidebar({ mangaTitle, ...props }: { mangaTitle: string } &
       </div>
       <SidebarContent className="gap-0">
         {/* We create a collapsible SidebarGroup for each parent. */}
-        {data.navMain.map((item) => (
+        {chapterList.map((item: any) => (
           <Collapsible
-            key={item.title}
-            title={item.title}
+            key={item.volume}
+            title={item.volume}
             defaultOpen
             className="group/collapsible"
           >
@@ -86,17 +164,20 @@ export function ReaderSidebar({ mangaTitle, ...props }: { mangaTitle: string } &
                 className="group/label text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sm"
               >
                 <CollapsibleTrigger>
-                  {item.title}{" "}
+                  {`Volume ${item.volume}`}{" "}
                   <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
                 </CollapsibleTrigger>
               </SidebarGroupLabel>
               <CollapsibleContent>
                 <SidebarGroupContent>
                   <SidebarMenu>
-                    {item.items?.map((item) => (
-                      <SidebarMenuItem key={item.title}>
-                        <SidebarMenuButton asChild isActive={item.isActive}>
-                          <a href={item.url}>{item.title}</a>
+                    {item.items?.map((item: any) => (
+                      <SidebarMenuItem key={item.chapter}>
+                        <SidebarMenuButton asChild 
+                         // isActive={item.isActive}
+                         isActive={false}
+                        >
+                          <a href="google.com">{`Chapter ${item.chapter}`}</a>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                     ))}
